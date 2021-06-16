@@ -11,3 +11,7 @@ command.get-money.wrong.sender-not-player=sender is not a player
 command.get-money.wrong.no-op-to-send=to get other player's money, you need op.
 command.get-money.success.you.%s=you have %s yens
 command.get-money.success.%s.%s=%s have %s yens
+
+command.take-money.usage=/take-money <amount> from <user>
+command.take-money.wrong.%s.no-much-money=%s does not have enough money.
+command.take-money.success.%s.%s.%s.%s=taken %2s yen from %3s. %3s have %5s now.

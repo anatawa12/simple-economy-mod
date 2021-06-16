@@ -19,6 +19,7 @@ public class SimpleEconomy {
     public void onServerStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandGetMoney());
         event.registerServerCommand(new CommandSendMoney());
+        event.registerServerCommand(new CommandTakeMoney());
     }
 
     @SubscribeEvent

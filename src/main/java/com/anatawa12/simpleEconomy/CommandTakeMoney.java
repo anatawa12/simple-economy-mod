@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.anatawa12.simpleEconomy.SimpleEconomy.MONEY_LOGGER;
+
 public class CommandTakeMoney extends MoneyCommandBase {
     @Override
     public int getRequiredPermissionLevel() {
@@ -54,6 +56,8 @@ public class CommandTakeMoney extends MoneyCommandBase {
         sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s",
                 target.getName(),
                 target.money));
+
+        MONEY_LOGGER.info("{} taken {} from {}", sender, amount, target);
     }
 
     @SuppressWarnings("unchecked")

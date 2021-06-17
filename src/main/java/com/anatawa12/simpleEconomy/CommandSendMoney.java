@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.anatawa12.simpleEconomy.SimpleEconomy.MONEY_LOGGER;
+
 public class CommandSendMoney extends MoneyCommandBase {
     @Override
     public int getRequiredPermissionLevel() {
@@ -86,6 +88,8 @@ public class CommandSendMoney extends MoneyCommandBase {
                 sourcePlayer == null ? "nobody" : sourcePlayer.getName(),
                 targetPlayer.getName(),
                 targetPlayer.money));
+
+        MONEY_LOGGER.info("{} sent {} from {} to {}", sender, value, sourcePlayer, targetPlayer);
     }
 
     @SuppressWarnings("unchecked")

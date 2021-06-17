@@ -74,7 +74,7 @@ public final class MoneyManager extends WorldSavedData {
             NBTTagCompound playerCompound = tags.getCompoundTagAt(i);
             Player player = new Player(playerCompound.getString("uuid"));
             player.updateName(playerCompound.getString("nane"));
-            player.money = playerCompound.getInteger("money");
+            player.money = playerCompound.getLong("money");
         }
     }
 
@@ -86,7 +86,7 @@ public final class MoneyManager extends WorldSavedData {
             NBTTagCompound playerCompound = new NBTTagCompound();
             playerCompound.setString("uuid", player.uuid);
             playerCompound.setString("name", player.name);
-            playerCompound.setInteger("money", player.money);
+            playerCompound.setLong("money", player.money);
             tags.appendTag(playerCompound);
         }
 
@@ -96,7 +96,7 @@ public final class MoneyManager extends WorldSavedData {
     public class Player {
         private @Nullable String name;
         public @Nonnull final String uuid;
-        public int money;
+        public long money;
 
         private Player(@Nonnull String uuid) {
             if (playerByUUID.containsKey(uuid))

@@ -28,7 +28,7 @@ public class CommandGetMoney extends MoneyCommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        if (sender.canCommandSenderUseCommand(3, "get-money-others"))
+        if (Utils.hasPrivileges(sender))
             return "command.get-money.usage.with-op";
         else
             return "command.get-money.usage.no-op";
@@ -46,7 +46,7 @@ public class CommandGetMoney extends MoneyCommandBase {
                 break;
             }
             case 1: {
-                if (!sender.canCommandSenderUseCommand(3, "get-money-others"))
+                if (!Utils.hasPrivileges(sender))
                     throw new WrongUsageException("command.get-money.wrong.no-op-to-send");
                 MoneyManager.Player player = getPlayer(args[0]);
                 sender.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s",
@@ -62,7 +62,7 @@ public class CommandGetMoney extends MoneyCommandBase {
     @SuppressWarnings("unchecked")
     @Override
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
-        if (!sender.canCommandSenderUseCommand(3, "get-money-others"))
+        if (!Utils.hasPrivileges(sender))
             return null;
         if (args.length == 1)
             return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());

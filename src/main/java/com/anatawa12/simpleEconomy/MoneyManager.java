@@ -13,7 +13,8 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+
+import static com.anatawa12.simpleEconomy.Utils.getUUIDString;
 
 public final class MoneyManager extends WorldSavedData {
     public static String identifier = "com.anatawa12.simpleEconomy.MoneyManager";
@@ -55,7 +56,7 @@ public final class MoneyManager extends WorldSavedData {
         if (entityPlayer.worldObj.isRemote)
             throw new IllegalStateException("supported only on server");
 
-        String uuid = getUUID(entityPlayer);
+        String uuid = getUUIDString(entityPlayer);
         String playerName = entityPlayer.getDisplayName();
 
         Player player = playerByUUID.get(uuid);
@@ -144,11 +145,5 @@ public final class MoneyManager extends WorldSavedData {
             world.setItemData(identifier, money);
         }
         return money;
-    }
-
-    @Nonnull
-    private static String getUUID(EntityPlayer entityPlayer) {
-        UUID uniqueID = entityPlayer.getUniqueID();
-        return uniqueID.toString().replace("-", "").toLowerCase(Locale.ROOT);
     }
 }

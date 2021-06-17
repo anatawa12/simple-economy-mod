@@ -65,7 +65,7 @@ public class CommandTakeMoney extends MoneyCommandBase {
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
         if (args.length == 1) return null; // just number
 
-        if (sender.canCommandSenderUseCommand(3, "get-money-others")) {
+        if (Utils.hasPrivileges(sender)) {
             // if you have op
             switch (args.length) {
                 case 2: return getListOfStringsMatchingLastWord(args, "from", "to");

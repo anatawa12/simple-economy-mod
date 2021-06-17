@@ -33,7 +33,7 @@ public class CommandSendMoney extends MoneyCommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        if (sender.canCommandSenderUseCommand(3, "get-money-others")) {
+        if (Utils.hasPrivileges(sender)) {
             return "command.send-money.usage.with-op";
         } else {
             return "command.send-money.usage.no-op";
@@ -51,7 +51,7 @@ public class CommandSendMoney extends MoneyCommandBase {
 
         final MoneyManager.Player sourcePlayer;
         if ("from".equals(args[i])) {
-            if (!sender.canCommandSenderUseCommand(3, "send-money-others"))
+            if (!Utils.hasPrivileges(sender))
                 throw new WrongUsageException("command.send-money.wrong.no-op-to-send");
             i++;
             if (!"null".equals(args[i++])) {
@@ -97,7 +97,7 @@ public class CommandSendMoney extends MoneyCommandBase {
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
         if (args.length == 1) return null; // just number
 
-        if (sender.canCommandSenderUseCommand(3, "get-money-others")) {
+        if (Utils.hasPrivileges(sender)) {
             // if you have op
             switch (args.length) {
                 case 2: return getListOfStringsMatchingLastWord(args, "from", "to");

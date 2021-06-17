@@ -13,13 +13,12 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.anatawa12.simpleEconomy.Utils.getUUIDString;
+import java.util.UUID;
 
 public final class MoneyManager extends WorldSavedData {
     public static String identifier = "com.anatawa12.simpleEconomy.MoneyManager";
     private final Map<String, Player> playerByName = new HashMap<>();
-    private final Map<String, Player> playerByUUID = new HashMap<>();
+    private final Map<UUID, Player> playerByUUID = new HashMap<>();
 
     @SuppressWarnings("unused")
     public MoneyManager(String identifier) {
@@ -56,7 +55,7 @@ public final class MoneyManager extends WorldSavedData {
         if (entityPlayer.worldObj.isRemote)
             throw new IllegalStateException("supported only on server");
 
-        String uuid = getUUIDString(entityPlayer);
+        UUID uuid = entityPlayer.getUniqueID();
         String playerName = entityPlayer.getDisplayName();
 
         Player player = playerByUUID.get(uuid);
@@ -72,7 +71,9 @@ public final class MoneyManager extends WorldSavedData {
 
         for (int i = 0; i < tags.tagCount(); i++) {
             NBTTagCompound playerCompound = tags.getCompoundTagAt(i);
-            Player player = new Player(playerCompound.getString("uuid"));
+            Player player = new Player(new UUID(
+                    playerCompound.getLong("uuidM"),
+                    playerCompound.getLong("uuidL")));
             player.updateName(playerCompound.getString("nane"));
             player.money = playerCompound.getLong("money");
         }
@@ -84,7 +85,8 @@ public final class MoneyManager extends WorldSavedData {
 
         for (Player player : playerByName.values()) {
             NBTTagCompound playerCompound = new NBTTagCompound();
-            playerCompound.setString("uuid", player.uuid);
+            playerCompound.setLong("uuidM", player.uuid.getMostSignificantBits());
+            playerCompound.setLong("uuidL", player.uuid.getLeastSignificantBits());
             playerCompound.setString("name", player.name);
             playerCompound.setLong("money", player.money);
             tags.appendTag(playerCompound);
@@ -95,10 +97,10 @@ public final class MoneyManager extends WorldSavedData {
 
     public class Player {
         private @Nullable String name;
-        private @Nonnull final String uuid;
+        private @Nonnull final UUID uuid;
         private long money;
 
-        private Player(@Nonnull String uuid) {
+        private Player(@Nonnull UUID uuid) {
             if (playerByUUID.containsKey(uuid))
                 throw new IllegalStateException("uuid duplicate");
             this.uuid = uuid;

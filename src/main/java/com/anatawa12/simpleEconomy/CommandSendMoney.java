@@ -1,6 +1,5 @@
 package com.anatawa12.simpleEconomy;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class CommandSendMoney extends CommandBase {
+public class CommandSendMoney extends MoneyCommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
@@ -48,46 +47,45 @@ public class CommandSendMoney extends CommandBase {
 
         if (args.length < i + 2) throw new WrongUsageException(getCommandUsage(sender));
 
-        final EntityPlayer sourcePlayer;
+        final MoneyManager.Player sourcePlayer;
         if ("from".equals(args[i])) {
             if (!sender.canCommandSenderUseCommand(3, "send-money-others"))
                 throw new WrongUsageException("command.send-money.wrong.no-op-to-send");
             i++;
             if (!"null".equals(args[i++])) {
-                sourcePlayer = getPlayer(sender, args[i - 1]);
+                sourcePlayer = getPlayer(args[i - 1]);
             } else {
                 sourcePlayer = null;
             }
         } else {
             if (!(sender instanceof EntityPlayer))
                 throw new WrongUsageException("command.send-money.wrong.sender-not-player");
-            sourcePlayer = (EntityPlayer) sender;
+            sourcePlayer = MoneyManager.getPlayerByEntity((EntityPlayer) sender);
         }
 
         if (args.length < i + 2) throw new WrongUsageException(getCommandUsage(sender));
 
-        final EntityPlayer targetPlayer;
+        final MoneyManager.Player targetPlayer;
         if ("to".equals(args[i])) {
             i++;
-            targetPlayer = getPlayer(sender, args[i++]);
+            targetPlayer = getPlayer(args[i++]);
         } else {
             throw new WrongUsageException(getCommandUsage(sender));
         }
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        if (sourcePlayer != null && PlayerMoney.getMoney(sourcePlayer) < value) {
-            throw new WrongUsageException("command.send-money.wrong.%s.no-much-money", sourcePlayer.getCommandSenderName());
+        if (sourcePlayer != null && sourcePlayer.money < value) {
+            throw new WrongUsageException("command.send-money.wrong.%s.no-much-money", sourcePlayer.getName());
         }
 
-        int targetHave = PlayerMoney.getMoney(targetPlayer);
-        PlayerMoney.setMoney(targetPlayer, targetHave + value);
+        targetPlayer.money += value;
 
         sender.addChatMessage(new ChatComponentTranslation("command.send-money.success.%s.%s.%s.%s",
                 value,
-                sourcePlayer == null ? "nobody" : sourcePlayer.getCommandSenderName(),
-                targetPlayer.getCommandSenderName(),
-                targetHave + value));
+                sourcePlayer == null ? "nobody" : sourcePlayer.getName(),
+                targetPlayer.getName(),
+                targetPlayer.money));
     }
 
     @SuppressWarnings("unchecked")

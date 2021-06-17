@@ -1,6 +1,5 @@
 package com.anatawa12.simpleEconomy;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +8,7 @@ import net.minecraft.util.ChatComponentTranslation;
 
 import java.util.List;
 
-public class CommandGetMoney extends CommandBase {
+public class CommandGetMoney extends MoneyCommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
@@ -43,16 +42,15 @@ public class CommandGetMoney extends CommandBase {
                     throw new WrongUsageException("command.get-money.wrong.sender-not-player");
                 EntityPlayer player = (EntityPlayer) sender;
                 player.addChatMessage(new ChatComponentTranslation("command.get-money.success.you.%s",
-                        PlayerMoney.getMoney(player)));
+                        MoneyManager.getPlayerByEntity(player).money));
                 break;
             }
             case 1: {
                 if (!sender.canCommandSenderUseCommand(3, "get-money-others"))
                     throw new WrongUsageException("command.get-money.wrong.no-op-to-send");
-                EntityPlayer player = getPlayer(sender, args[0]);
-                player.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s",
-                        player.getCommandSenderName(),
-                        PlayerMoney.getMoney(player)));
+                MoneyManager.Player player = getPlayer(args[0]);
+                sender.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s",
+                        args[0], player.money));
                 break;
             }
             default: {

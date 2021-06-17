@@ -1,9 +1,7 @@
 package com.anatawa12.simpleEconomy;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 
@@ -12,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class CommandTakeMoney extends CommandBase {
+public class CommandTakeMoney extends MoneyCommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 3;
@@ -37,27 +35,25 @@ public class CommandTakeMoney extends CommandBase {
 
         if (args.length < i + 2) throw new WrongUsageException(getCommandUsage(sender));
 
-        final EntityPlayer targetPlayer;
+        final MoneyManager.Player target;
         if ("from".equals(args[i])) {
             i++;
-            targetPlayer = getPlayer(sender, args[i++]);
+            target = getPlayer(args[i++]);
         } else {
             throw new WrongUsageException(getCommandUsage(sender));
         }
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        int targetHave = PlayerMoney.getMoney(targetPlayer);
-
-        if (targetHave < amount) {
-            throw new WrongUsageException("command.take-money.wrong.%s.no-much-money", targetPlayer.getCommandSenderName());
+        if (target.money < amount) {
+            throw new WrongUsageException("command.take-money.wrong.%s.no-much-money", target.getName());
         }
 
-        PlayerMoney.setMoney(targetPlayer, targetHave - amount);
+        target.money -= amount;
 
         sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s",
-                targetPlayer.getCommandSenderName(),
-                targetHave - amount));
+                target.getName(),
+                target.money));
     }
 
     @SuppressWarnings("unchecked")

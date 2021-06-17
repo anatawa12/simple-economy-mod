@@ -95,8 +95,8 @@ public final class MoneyManager extends WorldSavedData {
 
     public class Player {
         private @Nullable String name;
-        public @Nonnull final String uuid;
-        public long money;
+        private @Nonnull final String uuid;
+        private long money;
 
         private Player(@Nonnull String uuid) {
             if (playerByUUID.containsKey(uuid))
@@ -129,6 +129,15 @@ public final class MoneyManager extends WorldSavedData {
         @Nullable
         public Object getName() {
             return name;
+        }
+
+        public long getMoney() {
+            return money;
+        }
+
+        public void addMoney(long difference) {
+            this.money += difference;
+            // TODO: notification
         }
     }
 

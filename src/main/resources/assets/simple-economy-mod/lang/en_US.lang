@@ -17,3 +17,6 @@ command.take-money.wrong.%s.no-much-money=%s does not have enough money.
 command.take-money.success.%s.%s.%s.%s=taken %2s yen from %3s. %3s have %5s now.
 
 command.simple-money.player.not-found.%s=Player %s cannot be found
+
+block.crash-box.no-permission=You doesn't own this block. You need op to operation.
+block.crash-box.privilege-check=You doesn't own this block. Do again to use operator privileges. 

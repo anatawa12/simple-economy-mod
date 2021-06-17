@@ -77,17 +77,17 @@ public class CommandSendMoney extends MoneyCommandBase {
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        if (sourcePlayer != null && sourcePlayer.money < value) {
+        if (sourcePlayer != null && sourcePlayer.getMoney() < value) {
             throw new WrongUsageException("command.send-money.wrong.%s.no-much-money", sourcePlayer.getName());
         }
 
-        targetPlayer.money += value;
+        targetPlayer.addMoney(value);
 
         sender.addChatMessage(new ChatComponentTranslation("command.send-money.success.%s.%s.%s.%s",
                 value,
                 sourcePlayer == null ? "nobody" : sourcePlayer.getName(),
                 targetPlayer.getName(),
-                targetPlayer.money));
+                targetPlayer.getMoney()));
 
         MONEY_LOGGER.info("{} sent {} from {} to {}", sender, value, sourcePlayer, targetPlayer);
     }

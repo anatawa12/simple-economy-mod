@@ -47,15 +47,15 @@ public class CommandTakeMoney extends MoneyCommandBase {
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        if (target.money < amount) {
+        if (target.getMoney() < amount) {
             throw new WrongUsageException("command.take-money.wrong.%s.no-much-money", target.getName());
         }
 
-        target.money -= amount;
+        target.addMoney(-amount);
 
         sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s",
                 target.getName(),
-                target.money));
+                target.getMoney()));
 
         MONEY_LOGGER.info("{} taken {} from {}", sender, amount, target);
     }

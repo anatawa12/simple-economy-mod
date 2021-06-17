@@ -42,7 +42,7 @@ public class CommandGetMoney extends MoneyCommandBase {
                     throw new WrongUsageException("command.get-money.wrong.sender-not-player");
                 EntityPlayer player = (EntityPlayer) sender;
                 player.addChatMessage(new ChatComponentTranslation("command.get-money.success.you.%s",
-                        MoneyManager.getPlayerByEntity(player).money));
+                        MoneyManager.getPlayerByEntity(player).getMoney()));
                 break;
             }
             case 1: {
@@ -50,7 +50,7 @@ public class CommandGetMoney extends MoneyCommandBase {
                     throw new WrongUsageException("command.get-money.wrong.no-op-to-send");
                 MoneyManager.Player player = getPlayer(args[0]);
                 sender.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s",
-                        args[0], player.money));
+                        args[0], player.getMoney()));
                 break;
             }
             default: {

@@ -101,6 +101,8 @@ public final class MoneyManager extends WorldSavedData {
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        boolean dirtyOld = isDirty();
+
         NBTTagList tags = compound.getTagList("l", 10);
 
         for (int i = 0; i < tags.tagCount(); i++) {
@@ -111,6 +113,8 @@ public final class MoneyManager extends WorldSavedData {
             player.updateName(playerCompound.getString("nane"));
             player.money = playerCompound.getLong("money");
         }
+
+        setDirty(dirtyOld);
     }
 
     @Override
@@ -139,10 +143,12 @@ public final class MoneyManager extends WorldSavedData {
                 throw new IllegalStateException("uuid duplicate");
             this.uuid = uuid;
 
+            markDirty();
             playerByUUID.put(uuid, this);
         }
 
         private void updateName(@Nullable String name) {
+            markDirty();
             if (this.name != null) {
                 Player old = playerByName.remove(this.name.toLowerCase(Locale.ROOT));
                 if (old != null) old.name = null;
@@ -176,6 +182,7 @@ public final class MoneyManager extends WorldSavedData {
         }
 
         public void addMoney(long difference) {
+            markDirty();
             this.money += difference;
             SimpleEconomy.requestSyncByUuid(uuid);
         }

@@ -28,3 +28,5 @@ block.crash-box.gui.%s.unit=%s yens
 block.crash-box.gui.unit=yens
 block.crash-box.gui.player.no-much-money=Player doesn't have much money.
 block.crash-box.gui.cash-box.no-much-money=The box doesn't have much money.
+
+tile.simple-economy-mod:cash-box.name=Cash Box

@@ -23,6 +23,7 @@ public final class CashBoxBlock extends BlockContainer {
     private CashBoxBlock() {
         super(Material.iron);
         setCreativeTab(CreativeTabs.tabDecorations);
+        setBlockName("simple-economy-mod:cash-box");
     }
 
     @Override

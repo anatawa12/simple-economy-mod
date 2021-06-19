@@ -7,7 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -50,8 +49,6 @@ public final class CashBoxBlock extends BlockContainer {
         CashBoxTileEntity tileEntity = getTEAndCheckPermission(world, player, x, y, z);
         if (tileEntity == null) return true;
 
-        player.addChatComponentMessage(new ChatComponentText("gui open"));
-        player.openGui(null, GuiHandler.cashBoxGui, world, x, y, z);
         SimpleEconomy.openGui(player, GuiHandler.cashBoxGui, world, x, y, z);
 
         return true;

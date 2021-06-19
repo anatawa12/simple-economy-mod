@@ -3,7 +3,7 @@ command.send-money.usage.no-op=/send-money <amount> to <user>
 command.send-money.wrong.no-op-to-send=to send other player's money, you need op.
 command.send-money.wrong.sender-not-player=sender is not a player
 command.send-money.wrong.%s.no-much-money=%s does not have enough money.
-command.send-money.success.%s.%s.%s.%s=sent %1s yen from %2s to %3s, %3s have %4s now.
+command.send-money.success.%s.%s.%s.%s=sent %1$s yen from %2$s to %3$s, %3$s have %4$s now.
 
 command.get-money.usage.with-op=/get-money [user]
 command.get-money.usage.no-op=/get-money
@@ -14,7 +14,7 @@ command.get-money.success.%s.%s=%s have %s yens
 
 command.take-money.usage=/take-money <amount> from <user>
 command.take-money.wrong.%s.no-much-money=%s does not have enough money.
-command.take-money.success.%s.%s.%s.%s=taken %2s yen from %3s. %3s have %5s now.
+command.take-money.success.%s.%s.%s=taken %1$s yen from %2$s. %2$s have %3$s now.
 
 command.simple-money.player.not-found.%s=Player %s cannot be found
 

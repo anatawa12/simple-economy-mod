@@ -1,16 +1,11 @@
 [
 {
   "modid": "simple-economy-mod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "name": "Simple Economy",
+  "description": "The mod adds simple economy system",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+  "authorList": ["anatawa12"],
+  "credits": "Copyright (c) 2021 anatawa12 and other contributors. Licensed under MIT(X11) License."
 }
 ]

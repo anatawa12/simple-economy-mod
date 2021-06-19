@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -113,7 +114,7 @@ public class CashBoxGui extends GuiContainer {
     @Override
     protected void keyTyped(char p_73869_1_, int p_73869_2_) {
         super.keyTyped(p_73869_1_, p_73869_2_);
-        if (p_73869_1_ == 127 || "0123456789".indexOf(p_73869_1_) != -1)
+        if (!ChatAllowedCharacters.isAllowedCharacter(p_73869_1_) || "0123456789".indexOf(p_73869_1_) != -1)
             sendMoney.textboxKeyTyped(p_73869_1_, p_73869_2_);
     }
 

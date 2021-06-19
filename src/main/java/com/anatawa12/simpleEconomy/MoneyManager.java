@@ -7,13 +7,16 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class MoneyManager extends WorldSavedData {
     public static String identifier = "com.anatawa12.simpleEconomy.MoneyManager";
@@ -39,6 +42,25 @@ public final class MoneyManager extends WorldSavedData {
         return getInstance().getPlayerByEntityInternal(entityPlayer);
     }
 
+    @Nonnull
+    public static Player getPlayerByUUID(UUID uuid) {
+        return getInstance().getPlayerByUUIDInternal(uuid);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Pair<UUID, String>> getPlayersInfo() {
+        // ensure logged-in players are listed up
+        for (EntityPlayerMP playerMP : (List<EntityPlayerMP>) MinecraftServer.getServer()
+                .getConfigurationManager().playerEntityList) {
+            getPlayerByEntity(playerMP);
+        }
+
+        return getInstance().playerByUUID.values().stream()
+                .filter(x -> x.getName() != null)
+                .map(x -> Pair.of(x.uuid, Utils.toStringForGui(x)))
+                .collect(Collectors.toList());
+    }
+
     @Nullable
     private Player getPlayerByNameInternal(@Nonnull String playerName) {
         EntityPlayerMP entityPlayerMP = MinecraftServer.getServer().getConfigurationManager().func_152612_a(playerName);
@@ -62,6 +84,18 @@ public final class MoneyManager extends WorldSavedData {
 
         if (player == null) player = new Player(uuid);
         player.updateName(playerName);
+        return player;
+    }
+
+    @Nonnull
+    private Player getPlayerByUUIDInternal(UUID uuid) {
+        EntityPlayerMP playerMP = Utils.findPlayer(uuid);
+        Player player = playerByUUID.get(uuid);
+
+        if (player == null) player = new Player(uuid);
+
+        if (playerMP != null) player.updateName(playerMP.getCommandSenderName());
+
         return player;
     }
 
@@ -129,8 +163,12 @@ public final class MoneyManager extends WorldSavedData {
         }
 
         @Nullable
-        public Object getName() {
+        public String getName() {
             return name;
+        }
+
+        public UUID getUUID() {
+            return uuid;
         }
 
         public long getMoney() {
@@ -139,7 +177,7 @@ public final class MoneyManager extends WorldSavedData {
 
         public void addMoney(long difference) {
             this.money += difference;
-            // TODO: notification
+            SimpleEconomy.requestSyncByUuid(uuid);
         }
     }
 

@@ -20,3 +20,11 @@ command.simple-money.player.not-found.%s=Player %s cannot be found
 
 block.crash-box.no-permission=You doesn't own this block. You need op to operation.
 block.crash-box.privilege-check=You doesn't own this block. Do again to use operator privileges. 
+
+block.crash-box.gui.allowed-players=Allowed Players
+block.crash-box.gui.you-have=You have
+block.crash-box.gui.box-have=Box have
+block.crash-box.gui.%s.unit=%s yens
+block.crash-box.gui.unit=yens
+block.crash-box.gui.player.no-much-money=Player doesn't have much money.
+block.crash-box.gui.cash-box.no-much-money=The box doesn't have much money.

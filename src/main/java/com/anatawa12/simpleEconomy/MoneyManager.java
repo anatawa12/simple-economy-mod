@@ -110,7 +110,8 @@ public final class MoneyManager extends WorldSavedData {
             Player player = new Player(new UUID(
                     playerCompound.getLong("uuidM"),
                     playerCompound.getLong("uuidL")));
-            player.updateName(playerCompound.getString("nane"));
+            if (playerCompound.func_150299_b("name") == 8)
+                player.updateName(playerCompound.getString("name"));
             player.money = playerCompound.getLong("money");
         }
 
@@ -125,7 +126,8 @@ public final class MoneyManager extends WorldSavedData {
             NBTTagCompound playerCompound = new NBTTagCompound();
             playerCompound.setLong("uuidM", player.uuid.getMostSignificantBits());
             playerCompound.setLong("uuidL", player.uuid.getLeastSignificantBits());
-            playerCompound.setString("name", player.name);
+            if (player.name != null)
+                playerCompound.setString("name", player.name);
             playerCompound.setLong("money", player.money);
             tags.appendTag(playerCompound);
         }

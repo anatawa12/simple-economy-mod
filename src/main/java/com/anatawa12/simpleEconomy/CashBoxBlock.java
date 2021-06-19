@@ -3,6 +3,7 @@ package com.anatawa12.simpleEconomy;
 import com.anatawa12.simpleEconomy.gui.GuiHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,7 @@ public final class CashBoxBlock extends BlockContainer {
     @SuppressWarnings("unused")
     private CashBoxBlock() {
         super(Material.iron);
+        setCreativeTab(CreativeTabs.tabDecorations);
     }
 
     @Override

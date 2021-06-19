@@ -6,6 +6,8 @@ A mod adds simple economy system.
 
 ### Cash Box
 
+Creative Tab: DECORATION BLOCKS
+
 A cash box with player based locks.
 If you want to add player possible to access, 
 Click '+' button and select player from list.

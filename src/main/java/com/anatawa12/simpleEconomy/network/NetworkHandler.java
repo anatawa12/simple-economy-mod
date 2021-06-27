@@ -17,6 +17,7 @@ public class NetworkHandler {
         NETWORK.registerMessage(NoMuchMoneyError.HANDLER, NoMuchMoneyError.class, 5, Side.CLIENT);
         NETWORK.registerMessage(SendPlayersInfo.HANDLER, SendPlayersInfo.class, 6, Side.CLIENT);
         NETWORK.registerMessage(RequestStartAddingAllowedPlayer.HANDLER, RequestStartAddingAllowedPlayer.class, 7, Side.SERVER);
+        NETWORK.registerMessage(SendUnitName.HANDLER, SendUnitName.class, 8, Side.CLIENT);
     }
 
     public static void sendToClient(IMessage message, EntityPlayerMP to) {

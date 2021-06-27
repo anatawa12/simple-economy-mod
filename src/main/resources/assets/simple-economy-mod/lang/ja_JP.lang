@@ -3,18 +3,18 @@ command.send-money.usage.no-op=/send-money <金額> to <ユーザー>
 command.send-money.wrong.no-op-to-send=他人のお金を移動させるにはop権限が必要です。
 command.send-money.wrong.sender-not-player=プレイヤーから実行してください。
 command.send-money.wrong.%s.no-much-money=%sは十分なお金を持っていません。
-command.send-money.success.%s.%s.%s.%s=%2$sから%3$sへ%1$s円送信しました。%3$sは%4$s円持っています.
+command.send-money.success.%s.%s.%s.%s.%s=%2$sから%3$sへ%1$s %5$s送信しました。%3$sは%4$s %5$s持っています.
 
 command.get-money.usage.with-op=/get-money [ユーザー]
 command.get-money.usage.no-op=/get-money
 command.get-money.wrong.sender-not-player=プレイヤーから実行してください。
 command.get-money.wrong.no-op-to-send=他人の所持金を知るためにはopが必要です。
-command.get-money.success.you.%s=%s円持ってます
-command.get-money.success.%s.%s=%sは%s円持ってます
+command.get-money.success.you.%s.%s=%s %s持ってます
+command.get-money.success.%s.%s.%s=%sは%s %s持ってます
 
 command.take-money.usage=/take-money <金額> from <ユーザー>
 command.take-money.wrong.%s.no-much-money=%sは十分なお金を持っていません。
-command.take-money.success.%s.%s.%s=%2$sから%1$s円剥奪しました。%2$sは%3$s円持っています。
+command.take-money.success.%s.%s.%s.%s=%2$sから%1$s %4$s剥奪しました。%2$sは%3$s %4$s持っています。
 
 command.simple-money.player.not-found.%s=プレイヤー%sが見つかりませんでした。
 
@@ -24,8 +24,6 @@ block.crash-box.privilege-check=このブロックのアクセス権限があり
 block.crash-box.gui.allowed-players=アクセス許可済
 block.crash-box.gui.you-have=所持金
 block.crash-box.gui.box-have=保管金額
-block.crash-box.gui.%s.unit=%s円
-block.crash-box.gui.unit=円
 block.crash-box.gui.player.no-much-money=所持金が足りません
 block.crash-box.gui.cash-box.no-much-money=金庫にお金が足りません。
 

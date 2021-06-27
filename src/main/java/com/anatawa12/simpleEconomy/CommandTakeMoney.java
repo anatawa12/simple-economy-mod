@@ -53,10 +53,11 @@ public class CommandTakeMoney extends MoneyCommandBase {
 
         target.addMoney(-amount);
 
-        sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s.%s",
+        sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s.%s.%s",
                 amount,
                 target.getName(),
-                target.getMoney()));
+                target.getMoney(),
+                SimpleEconomy.getUnit()));
 
         MONEY_LOGGER.info("{} taken {} from {}", sender, amount, target);
     }

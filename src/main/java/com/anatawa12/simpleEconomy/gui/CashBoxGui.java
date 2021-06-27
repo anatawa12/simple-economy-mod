@@ -160,14 +160,14 @@ public class CashBoxGui extends GuiContainer {
 
         fontRendererObj.drawString(I18n.format("block.crash-box.gui.you-have"),
                 117, 47, 0xFFFFFF);
-        fontRendererObj.drawString(I18n.format("block.crash-box.gui.%s.unit", SimpleEconomy.clientUsersMoney),
+        fontRendererObj.drawString(String.format("%s %s", SimpleEconomy.clientUsersMoney, SimpleEconomy.getUnit()),
                 117, 55, 0xFFFFFF);
         fontRendererObj.drawString(I18n.format("block.crash-box.gui.box-have"),
                 117, 118, 0xFFFFFF);
-        fontRendererObj.drawString(I18n.format("block.crash-box.gui.%s.unit", cashBoxMoney),
+        fontRendererObj.drawString(String.format("%s %s", cashBoxMoney, SimpleEconomy.getUnit()),
                 117, 126, 0xFFFFFF);
 
-        fontRendererObj.drawString(I18n.format("block.crash-box.gui.unit"),
+        fontRendererObj.drawString(SimpleEconomy.getUnit(),
                 196, 95, 0xFFFFFF);
 
         drawCenteredString(fontRendererObj, errorMessage, 135, 160, 0xFFFFFF);

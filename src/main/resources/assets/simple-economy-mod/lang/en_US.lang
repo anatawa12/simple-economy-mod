@@ -3,18 +3,18 @@ command.send-money.usage.no-op=/send-money <amount> to <user>
 command.send-money.wrong.no-op-to-send=to send other player's money, you need op.
 command.send-money.wrong.sender-not-player=sender is not a player
 command.send-money.wrong.%s.no-much-money=%s does not have enough money.
-command.send-money.success.%s.%s.%s.%s=sent %1$s yen from %2$s to %3$s, %3$s have %4$s now.
+command.send-money.success.%s.%s.%s.%s.%s=sent %1$s %5$s from %2$s to %3$s, %3$s have %4$s %5$s now.
 
 command.get-money.usage.with-op=/get-money [user]
 command.get-money.usage.no-op=/get-money
 command.get-money.wrong.sender-not-player=sender is not a player
 command.get-money.wrong.no-op-to-send=to get other player's money, you need op.
-command.get-money.success.you.%s=you have %s yens
-command.get-money.success.%s.%s=%s have %s yens
+command.get-money.success.you.%s.%s=you have %s %s
+command.get-money.success.%s.%s.%s=%s have %s %s
 
 command.take-money.usage=/take-money <amount> from <user>
 command.take-money.wrong.%s.no-much-money=%s does not have enough money.
-command.take-money.success.%s.%s.%s=taken %1$s yen from %2$s. %2$s have %3$s now.
+command.take-money.success.%s.%s.%s.%s=taken %1$s %4$s from %2$s. %2$s have %3$s %4$s now.
 
 command.simple-money.player.not-found.%s=Player %s cannot be found
 
@@ -24,8 +24,6 @@ block.crash-box.privilege-check=You doesn't own this block. Do again to use oper
 block.crash-box.gui.allowed-players=Allowed Players
 block.crash-box.gui.you-have=You have
 block.crash-box.gui.box-have=Box have
-block.crash-box.gui.%s.unit=%s yens
-block.crash-box.gui.unit=yens
 block.crash-box.gui.player.no-much-money=Player doesn't have much money.
 block.crash-box.gui.cash-box.no-much-money=The box doesn't have much money.
 

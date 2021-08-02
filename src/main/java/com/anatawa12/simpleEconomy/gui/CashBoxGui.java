@@ -129,10 +129,23 @@ public class CashBoxGui extends GuiContainer {
                 sendToPlayer = !sendToPlayer;
                 return;
             case doSendId:
+                String str = sendMoney.getText();
+                if(str.isEmpty()){
+                    emptyError();
+                    return;
+                }
+                int iMoney;
+                try {
+                    iMoney = Integer.parseInt(str);
+                }
+                catch (NumberFormatException e){
+                    notSuitableError();
+                    return;
+                }
                 if (sendToPlayer) {
-                    NetworkHandler.sendToServer(new MoveCacheWithBox(-Integer.parseInt(sendMoney.getText())));
+                    NetworkHandler.sendToServer(new MoveCacheWithBox(-iMoney));
                 } else {
-                    NetworkHandler.sendToServer(new MoveCacheWithBox(Integer.parseInt(sendMoney.getText())));
+                    NetworkHandler.sendToServer(new MoveCacheWithBox(iMoney));
                 }
                 return;
             case doRemoveId:
@@ -240,5 +253,13 @@ public class CashBoxGui extends GuiContainer {
             errorMessage = I18n.format("block.crash-box.gui.player.no-much-money");
         }
         errorCounter = 5 * 20;
+    }
+
+    private void notSuitableError(){
+        errorMessage = I18n.format("block.crash-box.gui.player.can't cast to integer");
+    }
+
+    private void emptyError(){
+        errorMessage = I18n.format("block.crash-box.gui.player.empty");
     }
 }

@@ -26,7 +26,7 @@ block.crash-box.gui.you-have=所持金
 block.crash-box.gui.box-have=保管金額
 block.crash-box.gui.player.no-much-money=所持金が足りません
 block.crash-box.gui.cash-box.no-much-money=金庫にお金が足りません。
-block.crash-box.gui.player.empty=金額を入力してください。
-block.crash-box.gui.player.can't cast to integer=int型の範囲に収めてください。
+block.crash-box.gui.input.empty=金額を入力してください。
+block.crash-box.gui.input.out-of-range=金額が大きすぎます。
 
 tile.simple-economy-mod:cash-box.name=金庫

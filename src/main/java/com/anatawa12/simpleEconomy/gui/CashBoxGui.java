@@ -256,10 +256,10 @@ public class CashBoxGui extends GuiContainer {
     }
 
     private void notSuitableError(){
-        errorMessage = I18n.format("block.crash-box.gui.player.can't cast to integer");
+        errorMessage = I18n.format("block.crash-box.gui.input.out-of-range");
     }
 
     private void emptyError(){
-        errorMessage = I18n.format("block.crash-box.gui.player.empty");
+        errorMessage = I18n.format("block.crash-box.gui.input.empty");
     }
 }

@@ -26,7 +26,7 @@ block.crash-box.gui.you-have=You have
 block.crash-box.gui.box-have=Box have
 block.crash-box.gui.player.no-much-money=Player doesn't have much money.
 block.crash-box.gui.cash-box.no-much-money=The box doesn't have much money.
-block.crash-box.gui.player.empty=Please enter the amount
-block.crash-box.gui.player.can't cast to integer=Please keep it to the limit of int type
+block.crash-box.gui.input.empty=Please enter the amount.
+block.crash-box.gui.input.out-of-range=The amount is too big.
 
 tile.simple-economy-mod:cash-box.name=Cash Box

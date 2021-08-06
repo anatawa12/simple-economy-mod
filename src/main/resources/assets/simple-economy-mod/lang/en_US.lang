@@ -30,6 +30,3 @@ block.crash-box.gui.input.empty=Please enter the amount.
 block.crash-box.gui.input.illegal-value=The amount is illegal.
 
 tile.simple-economy-mod:cash-box.name=Cash Box
-
-text.general.simple-economy.amount.false.%s.%s=%1$s %2$s
-text.general.simple-economy.amount.true.%s.%s=%2$s%1$s

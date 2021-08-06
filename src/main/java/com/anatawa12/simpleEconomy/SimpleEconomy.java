@@ -133,7 +133,7 @@ public class SimpleEconomy {
 
     public static String getUM(BigDecimal money) {
         Unit unit = getUnit();
-        return I18n.format("text.general.simple-economy.amount." + unit.isBefore + ".%s.%s", money.toPlainString(), unit.unitStr);
+        return String.format(unit.isBefore ? "%1$s %2$s" : "%2$s%1$s", money.stripTrailingZeros().toPlainString(), unit.unitStr);
     }
 
     public static class Unit {

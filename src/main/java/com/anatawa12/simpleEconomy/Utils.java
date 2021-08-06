@@ -76,13 +76,13 @@ public class Utils {
         SimpleEconomy.Unit unit = SimpleEconomy.getUnit();
         if (!unit.isDecimal && bd.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0)
             throw new NumberFormatException("Decimal numbers are not allowed in the unit " + unit.unitStr);
-        return bd;
+        return bd.stripTrailingZeros();
     }
 
     public static BigDecimal parseBigDecimalWithUnitWithoutError(String str) {
         BigDecimal bd = new BigDecimal(str);
         if (!SimpleEconomy.getUnit().isDecimal)
             bd = bd.setScale(0, RoundingMode.HALF_UP);
-        return bd;
+        return bd.stripTrailingZeros();
     }
 }

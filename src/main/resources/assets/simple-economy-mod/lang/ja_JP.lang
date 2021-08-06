@@ -30,6 +30,3 @@ block.crash-box.gui.input.empty=金額を入力してください。
 block.crash-box.gui.input.illegal-value=金額が不正です。
 
 tile.simple-economy-mod:cash-box.name=金庫
-
-text.general.simple-economy.amount.false.%s.%s=%1$s %2$s
-text.general.simple-economy.amount.true.%s.%s=%2$s%1$s

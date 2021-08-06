@@ -84,6 +84,8 @@ public class CommandSendMoney extends MoneyCommandBase {
         }
 
         targetPlayer.addMoney(value);
+        if (sourcePlayer != null)
+            sourcePlayer.addMoney(-value);
 
         sender.addChatMessage(new ChatComponentTranslation("command.send-money.success.%s.%s.%s.%s",
                 SimpleEconomy.getUM(value),

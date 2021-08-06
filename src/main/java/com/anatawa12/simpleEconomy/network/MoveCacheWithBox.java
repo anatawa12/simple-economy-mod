@@ -2,13 +2,16 @@ package com.anatawa12.simpleEconomy.network;
 
 import com.anatawa12.simpleEconomy.CashBoxTileEntity;
 import com.anatawa12.simpleEconomy.gui.CashBoxContainer;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import java.math.BigDecimal;
+
 public class MoveCacheWithBox implements IMessage {
-    private int mount;
+    private String mount;
 
     @Deprecated
     public MoveCacheWithBox() {
@@ -16,18 +19,18 @@ public class MoveCacheWithBox implements IMessage {
 
     // positive: user -> box
     // negative: box -> user
-    public MoveCacheWithBox(int mount) {
-        this.mount = mount;
+    public MoveCacheWithBox(BigDecimal mount) {
+        this.mount = mount.toString();
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        mount = buf.readInt();
+        mount = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(mount);
+        ByteBufUtils.writeUTF8String(buf,mount);
     }
 
     public static IMessageHandler<MoveCacheWithBox, IMessage> HANDLER = (msg, ctx) -> {
@@ -36,7 +39,7 @@ public class MoveCacheWithBox implements IMessage {
         CashBoxTileEntity tileEntity = ((CashBoxContainer) playerMP.openContainer).te;
         if (tileEntity == null) return null;
         if (!tileEntity.checkAllowedOrOp(playerMP)) return null;
-        if (!tileEntity.moveMoney(playerMP, msg.mount)) {
+        if (!tileEntity.moveMoney(playerMP, new BigDecimal(msg.mount))) {
             return new NoMuchMoneyError();
         }
         return null;

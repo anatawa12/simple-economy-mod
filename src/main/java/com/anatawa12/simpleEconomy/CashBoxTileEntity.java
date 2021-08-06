@@ -11,11 +11,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.anatawa12.simpleEconomy.SimpleEconomy.MONEY_LOGGER;
@@ -24,7 +21,7 @@ public final class CashBoxTileEntity extends TileEntity {
     private final CashBoxContainer container = new CashBoxContainer(this);
     private final List<PrivilegeCheck> privilegeChecks = new ArrayList<>();
     private final Set<UUID> allowedList = new HashSet<>();
-    private long money;
+    private BigDecimal money = BigDecimal.ZERO;
 
     @Nullable
     public static CashBoxTileEntity getOrSetChecked(World world, int x, int y, int z) {
@@ -59,7 +56,7 @@ public final class CashBoxTileEntity extends TileEntity {
             }
         }
 
-        money = compound.getLong("money");
+        money = Utils.parseBigDecimalWithUnitWithoutError(compound.getString("money"));
     }
 
     @Override
@@ -73,7 +70,7 @@ public final class CashBoxTileEntity extends TileEntity {
             compound.setTag("allowedList", allowedList);
         }
 
-        compound.setLong("money", money);
+        compound.setString("money", money.toString());
     }
 
     private void updatePrivilegeChecks() {
@@ -133,7 +130,7 @@ public final class CashBoxTileEntity extends TileEntity {
         return container;
     }
 
-    public long getMoney() {
+    public BigDecimal getMoney() {
         return money;
     }
 
@@ -143,12 +140,13 @@ public final class CashBoxTileEntity extends TileEntity {
                 .collect(Collectors.toList());
     }
 
-    public boolean moveMoney(EntityPlayerMP from, int mount) {
+    public boolean moveMoney(EntityPlayerMP from, BigDecimal mount) {
         MoneyManager.Player moneyPlayer = MoneyManager.getPlayerByEntity(from);
-        if (mount > 0 && moneyPlayer.getMoney() < mount) return false;
-        if (mount < 0 && this.money < -mount) return false;
-        moneyPlayer.addMoney(-mount);
-        this.money += mount;
+        if (mount.compareTo(BigDecimal.ZERO) > 0 && moneyPlayer.getMoney().compareTo(mount) < 0) return false;
+        if (mount.compareTo(BigDecimal.ZERO) < 0 && this.money.compareTo(mount.multiply(BigDecimal.valueOf(-1))) < 0)
+            return false;
+        moneyPlayer.addMoney(mount.multiply(BigDecimal.valueOf(-1)));
+        this.money = this.money.add(mount);
         MONEY_LOGGER.info("moved {} from {} to cash box in dimension #{} at ({}, {}, {})",
                 mount, from, worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
         getContainer().sendUpdate();

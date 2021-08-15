@@ -2,12 +2,16 @@ package com.anatawa12.simpleEconomy;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -65,5 +69,20 @@ public class Utils {
         } else {
             return player.getName();
         }
+    }
+
+    public static BigDecimal parseBigDecimalWithUnit(String str) throws NumberFormatException {
+        BigDecimal bd = new BigDecimal(str);
+        SimpleEconomy.Unit unit = SimpleEconomy.getUnit();
+        if (!unit.isDecimal && bd.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0)
+            throw new NumberFormatException("Decimal numbers are not allowed in the unit " + unit.unitStr);
+        return bd.stripTrailingZeros();
+    }
+
+    public static BigDecimal parseBigDecimalWithUnitWithoutError(String str) {
+        BigDecimal bd = new BigDecimal(str);
+        if (!SimpleEconomy.getUnit().isDecimal)
+            bd = bd.setScale(0, RoundingMode.HALF_UP);
+        return bd.stripTrailingZeros();
     }
 }

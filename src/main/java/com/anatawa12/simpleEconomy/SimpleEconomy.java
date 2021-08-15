@@ -3,7 +3,8 @@ package com.anatawa12.simpleEconomy;
 import com.anatawa12.simpleEconomy.gui.GuiHandler;
 import com.anatawa12.simpleEconomy.network.NetworkHandler;
 import com.anatawa12.simpleEconomy.network.SendPlayersMoney;
-import com.anatawa12.simpleEconomy.network.SendUnitName;
+import com.anatawa12.simpleEconomy.network.SendUnitInfo;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -16,6 +17,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -26,17 +29,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Mod(modid = "simple-economy-mod")
+@Mod(modid = "simple-economy-mod", guiFactory = "com.anatawa12.simpleEconomy.GuiFactory")
 public class SimpleEconomy {
     public static final Logger MONEY_LOGGER = LogManager.getLogger("simple-economy-mod/money-management");
     @SideOnly(Side.CLIENT)
-    public static long clientUsersMoney;
-    private static String unit;
-    private static String serverUnit;
+    public static BigDecimal clientUsersMoney;
+    private static Unit unit;
+    private static Unit serverUnit;
+    static Configuration cfg;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
@@ -47,13 +52,21 @@ public class SimpleEconomy {
         NetworkHandler.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
         loadCfg(event.getSuggestedConfigurationFile());
+        /*if(event.getSide().isClient())
+            clientUsersMoney = BigDecimal.ZERO;*/
     }
 
     private void loadCfg(File file) {
-        Configuration cfg = new Configuration(file);
+        cfg = new Configuration(file);
+        cfg.load();
+        loadCfg();
+    }
+
+    private void loadCfg() {
         try {
-            cfg.load();
-            unit = cfg.getString("unit", "currency", "yen", "the unit of currency");
+            unit = new Unit(cfg.getString("unit", "currency", "yen", "the unit of currency"),
+                    cfg.getBoolean("isDecimal", "currency", false, "will the currency be a decimal"),
+                    cfg.getBoolean("isBefore", "currency", false, "is the unit before"));
         } finally {
             cfg.save();
         }
@@ -69,12 +82,12 @@ public class SimpleEconomy {
     private static final Set<UUID> syncRequestedUuids = new HashSet<>();
 
     @SubscribeEvent
-    public void onPreInit(TickEvent.ServerTickEvent event) {
+    public void onServerTick(TickEvent.ServerTickEvent event) {
         for (UUID syncPlayerUuid : syncRequestedUuids) {
             EntityPlayerMP playerMP = Utils.findPlayer(syncPlayerUuid);
             if (playerMP != null) {
                 MoneyManager.Player player = MoneyManager.getPlayerByEntity(playerMP);
-                NetworkHandler.sendToClient(new SendPlayersMoney(player.getMoney()), playerMP);
+                NetworkHandler.sendToClient(new SendPlayersMoney(player.getMoney().toString()), playerMP);
             }
         }
     }
@@ -82,13 +95,20 @@ public class SimpleEconomy {
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!MinecraftServer.getServer().isSinglePlayer()) {
-            NetworkHandler.sendToClient(new SendUnitName(unit), (EntityPlayerMP) event.player);
+            NetworkHandler.sendToClient(new SendUnitInfo(unit), (EntityPlayerMP) event.player);
         }
     }
 
     @SubscribeEvent
     public void onLogout(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         serverUnit = null;
+    }
+
+    @SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        // コンフィグが変更された時に呼ばれる。
+        if (event.modID.equals("simple-economy-mod"))
+            loadCfg();
     }
 
     public static void requestSyncByUuid(UUID uuid) {
@@ -103,11 +123,31 @@ public class SimpleEconomy {
         player.openGui(instance, guiId, world, x, y, z);
     }
 
-    public static String getUnit() {
+    public static Unit getUnit() {
         return serverUnit != null ? serverUnit : unit;
     }
 
-    public static void setRemoteUnit(String unit) {
+    public static void setRemoteUnit(Unit unit) {
         serverUnit = unit;
+    }
+
+    public static String getUM(BigDecimal money) {
+        Unit unit = getUnit();
+        return String.format(unit.isBefore ? "%1$s %2$s" : "%2$s%1$s", money.stripTrailingZeros().toPlainString(), unit.unitStr);
+    }
+
+    public static class Unit {
+        public String unitStr;
+        public boolean isDecimal;
+        public boolean isBefore;
+
+        public Unit() {
+        }
+
+        public Unit(String unitStr, boolean isDecimal, boolean isBefore) {
+            this.unitStr = unitStr;
+            this.isDecimal = isDecimal;
+            this.isBefore = isBefore;
+        }
     }
 }

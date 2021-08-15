@@ -41,16 +41,16 @@ public class CommandGetMoney extends MoneyCommandBase {
                 if (!(sender instanceof EntityPlayer))
                     throw new WrongUsageException("command.get-money.wrong.sender-not-player");
                 EntityPlayer player = (EntityPlayer) sender;
-                player.addChatMessage(new ChatComponentTranslation("command.get-money.success.you.%s.%s",
-                        MoneyManager.getPlayerByEntity(player).getMoney(), SimpleEconomy.getUnit()));
+                player.addChatMessage(new ChatComponentTranslation("command.get-money.success.you.%s",
+                        SimpleEconomy.getUM(MoneyManager.getPlayerByEntity(player).getMoney())));
                 break;
             }
             case 1: {
                 if (!Utils.hasPrivileges(sender))
                     throw new WrongUsageException("command.get-money.wrong.no-op-to-send");
                 MoneyManager.Player player = getPlayer(args[0]);
-                sender.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s.%s",
-                        args[0], player.getMoney(), SimpleEconomy.getUnit()));
+                sender.addChatMessage(new ChatComponentTranslation("command.get-money.success.%s.%s",
+                        args[0], SimpleEconomy.getUM(player.getMoney())));
                 break;
             }
             default: {

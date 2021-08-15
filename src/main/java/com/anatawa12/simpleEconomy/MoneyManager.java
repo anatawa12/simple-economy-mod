@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -112,7 +113,7 @@ public final class MoneyManager extends WorldSavedData {
                     playerCompound.getLong("uuidL")));
             if (playerCompound.func_150299_b("name") == 8)
                 player.updateName(playerCompound.getString("name"));
-            player.money = playerCompound.getLong("money");
+            player.money = Utils.parseBigDecimalWithUnitWithoutError(playerCompound.getString("money"));
         }
 
         setDirty(dirtyOld);
@@ -128,7 +129,7 @@ public final class MoneyManager extends WorldSavedData {
             playerCompound.setLong("uuidL", player.uuid.getLeastSignificantBits());
             if (player.name != null)
                 playerCompound.setString("name", player.name);
-            playerCompound.setLong("money", player.money);
+            playerCompound.setString("money", player.money.toString());
             tags.appendTag(playerCompound);
         }
 
@@ -138,7 +139,7 @@ public final class MoneyManager extends WorldSavedData {
     public class Player {
         private @Nullable String name;
         private @Nonnull final UUID uuid;
-        private long money;
+        private BigDecimal money = BigDecimal.ZERO;
 
         private Player(@Nonnull UUID uuid) {
             if (playerByUUID.containsKey(uuid))
@@ -179,13 +180,13 @@ public final class MoneyManager extends WorldSavedData {
             return uuid;
         }
 
-        public long getMoney() {
+        public BigDecimal getMoney() {
             return money;
         }
 
-        public void addMoney(long difference) {
+        public void addMoney(BigDecimal difference) {
             markDirty();
-            this.money += difference;
+            this.money = this.money.add(difference);
             SimpleEconomy.requestSyncByUuid(uuid);
         }
     }

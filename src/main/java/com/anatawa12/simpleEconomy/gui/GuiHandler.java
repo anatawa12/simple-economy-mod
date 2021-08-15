@@ -1,6 +1,7 @@
 package com.anatawa12.simpleEconomy.gui;
 
 import com.anatawa12.simpleEconomy.CashBoxTileEntity;
+import com.anatawa12.simpleEconomy.SimpleEconomy;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +17,7 @@ public class GuiHandler implements IGuiHandler {
         switch (ID) {
             case cashBoxGui:
             case cashBoxAddAllowGui:
+                SimpleEconomy.requestSyncByUuid(player.getUniqueID());
                 te = world.getTileEntity(x, y, z);
                 if (te instanceof CashBoxTileEntity)
                     return ((CashBoxTileEntity) te).getContainer();

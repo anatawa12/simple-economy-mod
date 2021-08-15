@@ -1,11 +1,13 @@
 package com.anatawa12.simpleEconomy;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +47,7 @@ public class CommandSendMoney extends MoneyCommandBase {
         if (args.length < 1) throw new WrongUsageException(getCommandUsage(sender));
 
         int i = 0;
-        final int value = parseIntWithMin(sender, args[i++], 1);
+        final BigDecimal value = parseBigDecimalWithMinAndUnit(args[i++], BigDecimal.ONE);
 
         if (args.length < i + 2) throw new WrongUsageException(getCommandUsage(sender));
 
@@ -54,7 +56,7 @@ public class CommandSendMoney extends MoneyCommandBase {
             if (!Utils.hasPrivileges(sender))
                 throw new WrongUsageException("command.send-money.wrong.no-op-to-send");
             i++;
-            if (!"null".equals(args[i++])) {
+            if (!"-".equals(args[i++])) {
                 sourcePlayer = getPlayer(args[i - 1]);
             } else {
                 sourcePlayer = null;
@@ -77,19 +79,19 @@ public class CommandSendMoney extends MoneyCommandBase {
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        if (sourcePlayer != null && sourcePlayer.getMoney() < value) {
+        if (sourcePlayer != null && sourcePlayer.getMoney().compareTo(value) < 0) {
             throw new WrongUsageException("command.send-money.wrong.%s.no-much-money", sourcePlayer.getName());
         }
 
         targetPlayer.addMoney(value);
         if (sourcePlayer != null)
-            sourcePlayer.addMoney(-value);
+            sourcePlayer.addMoney(value.multiply(BigDecimal.valueOf(-1)));
 
         sender.addChatMessage(new ChatComponentTranslation("command.send-money.success.%s.%s.%s.%s",
-                value,
+                SimpleEconomy.getUM(value),
                 sourcePlayer == null ? "nobody" : sourcePlayer.getName(),
                 targetPlayer.getName(),
-                targetPlayer.getMoney()));
+                SimpleEconomy.getUM(targetPlayer.getMoney())));
 
         MONEY_LOGGER.info("{} sent {} from {} to {}", sender, value, sourcePlayer, targetPlayer);
     }
@@ -102,11 +104,12 @@ public class CommandSendMoney extends MoneyCommandBase {
         if (Utils.hasPrivileges(sender)) {
             // if you have op
             switch (args.length) {
-                case 2: return getListOfStringsMatchingLastWord(args, "from", "to");
+                case 2:
+                    return getListOfStringsMatchingLastWord(args, "from", "to");
                 case 3:
                     if ("from".equals(args[1])) {
-                        return getListOfStringsFromIterableMatchingLastWord(args, 
-                                join(Arrays.asList(MinecraftServer.getServer().getAllUsernames()), "null"));
+                        return getListOfStringsFromIterableMatchingLastWord(args,
+                                join(Arrays.asList(MinecraftServer.getServer().getAllUsernames()), "-"));
                     } else {
                         return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
                     }
@@ -117,7 +120,8 @@ public class CommandSendMoney extends MoneyCommandBase {
             }
         } else {
             switch (args.length) {
-                case 2: return getListOfStringsMatchingLastWord(args, "to");
+                case 2:
+                    return getListOfStringsMatchingLastWord(args, "to");
                 case 3:
                     return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
             }
@@ -129,6 +133,7 @@ public class CommandSendMoney extends MoneyCommandBase {
         return () -> new Iterator<String>() {
             Iterator<String> iter = asList.iterator();
             String remain = value;
+
             @Override
             public boolean hasNext() {
                 if (iter != null) {

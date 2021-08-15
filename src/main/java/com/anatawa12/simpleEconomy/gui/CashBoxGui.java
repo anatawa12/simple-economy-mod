@@ -1,6 +1,7 @@
 package com.anatawa12.simpleEconomy.gui;
 
 import com.anatawa12.simpleEconomy.SimpleEconomy;
+import com.anatawa12.simpleEconomy.Utils;
 import com.anatawa12.simpleEconomy.network.MoveCacheWithBox;
 import com.anatawa12.simpleEconomy.network.NetworkHandler;
 import com.anatawa12.simpleEconomy.network.RemoveAllowedPlayer;
@@ -15,12 +16,13 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 public class CashBoxGui extends GuiContainer {
-    public long cashBoxMoney;
+    public BigDecimal cashBoxMoney = BigDecimal.ZERO;
     public List<Pair<UUID, String>> allowed;
 
     private final World world;
@@ -47,6 +49,9 @@ public class CashBoxGui extends GuiContainer {
     private static final int doRemoveId = 3;
     private static final int allowedPlayerBaseId = 16;
 
+    private int textFieldXPosGap = 117;
+    private String approvedStr = "0123456789";
+
     public CashBoxGui(World world, int x, int y, int z) {
         super(new CashBoxContainer());
 
@@ -65,12 +70,20 @@ public class CashBoxGui extends GuiContainer {
         buttonList().add(doRemove = new GuiButton(doRemoveId, 0, 0, 40, 20, "disallow"));
         doRemove.visible = false;
         buttonList = new NonClearableList<>(buttonList());
+
+        SimpleEconomy.Unit unit = SimpleEconomy.getUnit();
+        if (unit.isBefore) {
+            textFieldXPosGap += fontRendererObj.getStringWidth(unit.unitStr) + 3;
+        }
+        if (unit.isDecimal) {
+            approvedStr += ".";
+        }
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        sendMoney.xPosition = guiLeft + 117;
+        sendMoney.xPosition = guiLeft + textFieldXPosGap;
         sendMoney.yPosition = guiTop + 90;
         addAllowedPlayer.xPosition = guiLeft + 12;
         addAllowedPlayer.yPosition = guiTop + 33;
@@ -113,8 +126,9 @@ public class CashBoxGui extends GuiContainer {
 
     @Override
     protected void keyTyped(char p_73869_1_, int p_73869_2_) {
-        super.keyTyped(p_73869_1_, p_73869_2_);
-        if (!ChatAllowedCharacters.isAllowedCharacter(p_73869_1_) || "0123456789".indexOf(p_73869_1_) != -1)
+        if (!ChatAllowedCharacters.isAllowedCharacter(p_73869_1_) || (approvedStr.indexOf(p_73869_1_) != -1 && !sendMoney.isFocused()))
+            super.keyTyped(p_73869_1_, p_73869_2_);
+        if (!ChatAllowedCharacters.isAllowedCharacter(p_73869_1_) || approvedStr.indexOf(p_73869_1_) != -1)
             sendMoney.textboxKeyTyped(p_73869_1_, p_73869_2_);
     }
 
@@ -130,22 +144,21 @@ public class CashBoxGui extends GuiContainer {
                 return;
             case doSendId:
                 String str = sendMoney.getText();
-                if(str.isEmpty()){
+                if (str.isEmpty()) {
                     emptyError();
                     return;
                 }
-                int iMoney;
+                BigDecimal bdMoney;
                 try {
-                    iMoney = Integer.parseInt(str);
-                }
-                catch (NumberFormatException e){
+                    bdMoney = Utils.parseBigDecimalWithUnit(str);
+                } catch (NumberFormatException e) {
                     notSuitableError();
                     return;
                 }
                 if (sendToPlayer) {
-                    NetworkHandler.sendToServer(new MoveCacheWithBox(-iMoney));
+                    NetworkHandler.sendToServer(new MoveCacheWithBox(bdMoney.multiply(BigDecimal.valueOf(-1))));
                 } else {
-                    NetworkHandler.sendToServer(new MoveCacheWithBox(iMoney));
+                    NetworkHandler.sendToServer(new MoveCacheWithBox(bdMoney));
                 }
                 return;
             case doRemoveId:
@@ -173,15 +186,15 @@ public class CashBoxGui extends GuiContainer {
 
         fontRendererObj.drawString(I18n.format("block.crash-box.gui.you-have"),
                 117, 47, 0xFFFFFF);
-        fontRendererObj.drawString(String.format("%s %s", SimpleEconomy.clientUsersMoney, SimpleEconomy.getUnit()),
+        fontRendererObj.drawString(SimpleEconomy.getUM(SimpleEconomy.clientUsersMoney),
                 117, 55, 0xFFFFFF);
         fontRendererObj.drawString(I18n.format("block.crash-box.gui.box-have"),
                 117, 118, 0xFFFFFF);
-        fontRendererObj.drawString(String.format("%s %s", cashBoxMoney, SimpleEconomy.getUnit()),
+        fontRendererObj.drawString(SimpleEconomy.getUM(cashBoxMoney),
                 117, 126, 0xFFFFFF);
 
-        fontRendererObj.drawString(SimpleEconomy.getUnit(),
-                196, 95, 0xFFFFFF);
+        fontRendererObj.drawString(SimpleEconomy.getUnit().unitStr,
+                SimpleEconomy.getUnit().isBefore ? 117 : 196, 95, 0xFFFFFF);
 
         drawCenteredString(fontRendererObj, errorMessage, 135, 160, 0xFFFFFF);
 
@@ -231,7 +244,7 @@ public class CashBoxGui extends GuiContainer {
         return buttonList;
     }
 
-    public void setCashBoxInfo(long money, List<Pair<UUID, String>> allowed) {
+    public void setCashBoxInfo(BigDecimal money, List<Pair<UUID, String>> allowed) {
         this.cashBoxMoney = money;
         allowed.sort(Comparator.comparing(Pair::getLeft));
         if (!allowed.equals(this.allowed)) {
@@ -255,11 +268,11 @@ public class CashBoxGui extends GuiContainer {
         errorCounter = 5 * 20;
     }
 
-    private void notSuitableError(){
-        errorMessage = I18n.format("block.crash-box.gui.input.out-of-range");
+    private void notSuitableError() {
+        errorMessage = I18n.format("block.crash-box.gui.input.illegal-value");
     }
 
-    private void emptyError(){
+    private void emptyError() {
         errorMessage = I18n.format("block.crash-box.gui.input.empty");
     }
 }

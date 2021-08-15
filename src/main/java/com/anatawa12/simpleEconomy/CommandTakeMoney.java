@@ -5,6 +5,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,7 @@ public class CommandTakeMoney extends MoneyCommandBase {
         if (args.length < 1) throw new WrongUsageException(getCommandUsage(sender));
 
         int i = 0;
-        final int amount = parseIntWithMin(sender, args[i++], 1);
+        final BigDecimal amount = parseBigDecimalWithMinAndUnit(args[i++], BigDecimal.ONE);
 
         if (args.length < i + 2) throw new WrongUsageException(getCommandUsage(sender));
 
@@ -47,17 +48,16 @@ public class CommandTakeMoney extends MoneyCommandBase {
 
         if (i != args.length) throw new WrongUsageException(getCommandUsage(sender));
 
-        if (target.getMoney() < amount) {
+        if (target.getMoney().compareTo(amount) < 0) {
             throw new WrongUsageException("command.take-money.wrong.%s.no-much-money", target.getName());
         }
 
-        target.addMoney(-amount);
+        target.addMoney(amount.multiply(BigDecimal.valueOf(-1)));
 
-        sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s.%s.%s",
-                amount,
+        sender.addChatMessage(new ChatComponentTranslation("command.take-money.success.%s.%s.%s",
+                SimpleEconomy.getUM(amount),
                 target.getName(),
-                target.getMoney(),
-                SimpleEconomy.getUnit()));
+                SimpleEconomy.getUM(target.getMoney())));
 
         MONEY_LOGGER.info("{} taken {} from {}", sender, amount, target);
     }
